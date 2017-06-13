@@ -7,3 +7,10 @@ authors:
 crystal: 0.22.0
 
 license: MIT
+development_dependencies:
+  minitest:
+    github: ysbaddaden/minitest.cr    
+    version: "~> 0.3.5"
+  jennifer:
+    github: imdrasil/jennifer.cr
+    version: "~> 0.3.1"
