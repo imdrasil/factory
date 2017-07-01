@@ -66,7 +66,7 @@ class TestFactory < Factory::Base
   assign :f4, "assign"
   assign :f5, ->{ Test.dynamic }
 
-  after_initialize do |t|
+  def self.after_initialize(t)
     t.f4! += "2"
   end
 
@@ -88,7 +88,9 @@ end
 
 class ThirdTestFactory < SecondTestFactory
   attr :f1, "third"
-  after_initialize do |t|
+
+  def self.after_initialize(t)
+    super
     t.f1 += "a"
   end
 end

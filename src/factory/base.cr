@@ -26,27 +26,6 @@ module Factory
     Factory.default_methods
     Factory.render_build_methods
 
-    macro after_initialize(&block)
-      def self.after_initialize({{block.args[0].id}})
-        super
-        {{block.body}}
-      end
-    end
-
-    macro before_create(&block)
-      def self.before_create({{block.args[0].id}})
-        super
-        {{block.body}}
-      end
-    end
-
-    macro after_create(&block)
-      def self.after_create({{block.args[0].id}})
-        super
-        {{block.body}}
-      end
-    end
-
     macro describe_class(klass)
       {% CLASS_NAME.push(klass.stringify) %}
     end
@@ -60,12 +39,6 @@ module Factory
       {% TRAITS[name.id.stringify] = trait_name %}
       class {{trait_name.id}} < ::Factory::Trait
         {{yield}}
-      end
-    end
-
-    macro initialize_with(&block)
-      def self.initialize_with({{block.args[0].id}}, {{block.args[1].id}})
-        {{block.body}}
       end
     end
 

@@ -1,4 +1,4 @@
-# Factory [![Build Status](https://travis-ci.org/imdrasil/factory.svg)](https://travis-ci.org/imdrasil/factory)
+# Factory [![Build Status](https://travis-ci.org/imdrasil/factory.svg)](https://travis-ci.org/imdrasil/factory) [![Latest Release](https://img.shields.io/github/release/imdrasil/factory.svg)](https://github.com/imdrasil/factory/releases)
 
 Easy to use but flexible factory definition utility. Coul be used for testing purpose and for developing as well.
 
@@ -36,9 +36,9 @@ Factory will build class passing to constructor hash with string keys, so those 
 
 ```crystal
 class TestFactory < Factory::Base
-    attr :f1, "Ivan"
-    attr :f2, rand, Float64
-    attr :f3, -> { rand(1..3) }
+  attr :f1, "Ivan"
+  attr :f2, rand, Float64
+  attr :f3, -> { rand(1..3) }
 end
 ```
 
@@ -48,9 +48,9 @@ There is also assign strategy using `assign` macro. Using it all attributes will
 
 ```crystal
 class TestFactory < Factory::Base
-    assign :f1, "Ivan"
-    assign :f2, rand, Float64
-    assign :f3, -> { rand(1..3 }
+  assign :f1, "Ivan"
+  assign :f2, rand, Float64
+  assign :f3, -> { rand(1..3 }
 end
 
 # Will be do smth like
@@ -91,22 +91,23 @@ Also `after_initialize` callback could be specified:
 
 ```crystal
 class TestFactory < Factory::Base
-    after_initialize do |t|
-        t.f1.not_nil! += 1
-    end
+  def self.after_initialize(t)
+    super # if you want parrent one to be inked as well
+    t.f1.not_nil! += 1
+  end
 end
 ```
 
-Also the way of object initializing could be specified:
+The way of object initializing could be specified:
 
 ```crystal
 class TestFactory < Factory::Base
-    # here is default builder
-    initialize_with do |hash, traits|
-        obj = Test.new(hash)
-        make_assigns(obj, traits) # makes all assignements (traits will be described later)
-        obj
-    end
+  # here is default builder
+  def self.initialize_with(hash, traits)
+    obj = Test.new(hash)
+    make_assigns(obj, traits) # makes all assignements (traits will be described later)
+    obj
+  end
 end
 ```
 
@@ -119,13 +120,13 @@ sequence(:f1) { |i| "user#{i}@example.com" }
 You could inherite from existing factory and override some parameters:
 ```crystal
 class HumanFactory < Factory::Base
-    describe_class User
-    attr :f1, "asd"
+  describe_class User
+  attr :f1, "asd"
 end
 
 class AdminFactory < HumanFactory
-    attr :f1, "admin"
-    assign :f2, 1
+  attr :f1, "admin"
+  assign :f2, 1
 end
 ```
 
@@ -135,9 +136,9 @@ To group several attributes or assignments use trait.
 
 ```crystal
 class HumanFactory < Factory::Base
-    trait :homo do
-        attr :iq, 50
-    end
+  trait :homo do
+    attr :iq, 50
+  end
 end
 ```
 
