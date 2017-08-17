@@ -165,9 +165,41 @@ Factory.build_human(["some_trait"], {"some_attr" => "asd"})
 Factory.build_human(3, ["some_trait"], {"some_attr" => "asd"})
 ```
 
+#### Jennifer Support
+
+To create factory for (Jennifer)[https://github.com/imdrasil/jennifer.cr] model 
+
+```crystal
+# require all jennifer staff and models
+require "factory"
+require "factory/jennifer"
+
+class FilmFactory < Factory::Jennifer::Base
+  attr :rating, 5
+  assign :name, "Test Film" 
+
+  trait :bad do
+    assign :rating, 0
+  end
+end
+```
+
+It provides direct creating methods same as for building:
+
+```crystal
+FilmFactory.create([:bad], {:name => "Atilla"})
+```
+
 ## Development
 
-Next step will be integration with [jennifer](https://github.com/imdrasil/jennifer.cr) shard.
+For development postgres is required because of testing integration with Jennifer.
+
+Possible next tasks:
+
+- think  about adding assigning via hash or named tuble argument
+
+- adding `%attr` to traits
+
 
 ## Contributing
 

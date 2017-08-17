@@ -1,3 +1,14 @@
 language: crystal
+dist: trusty
+sudo: required
+services:
+  - postgresql
+addons:
+  postgresql: 9.4
+env:
+  - DB=postgres DB_USER=postgres DB_PASSWORD=""
+before_script:
+  - psql -c 'create database factory_test;' -U postgres
+  - crystal ./spec/support/sam.cr -- db:migrate
 
-script: make test
+script: make seq

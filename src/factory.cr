@@ -37,7 +37,7 @@ module Factory
     end
   end
 
-  macro render_build_methods
+  macro build_methods
     macro factory_builders(factory_name)
       module ::Factory
         def self.build_\{{factory_name}}
