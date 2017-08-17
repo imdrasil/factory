@@ -1,13 +1,11 @@
 module Factory
-  class Trait
+  class Trait(T)
     Factory.default_methods
 
-    def self.add_attributes(hash)
-      hash
+    def self.add_attributes(hash) : Void
     end
 
-    def self.make_assignes(obj)
-      obj
+    def self.make_assignes(obj : T) : Void
     end
 
     macro inherited
@@ -18,18 +16,20 @@ module Factory
       ASSIGNS = {} of String => String
 
       macro finished
-        def self.add_attributes(hash)
-          {
-            \{% for k, v in ATTRIBUTES %}
-              \{{k.id.stringify}} => \{% if v =~ /->/ %} \{{v.id}}.call \{% else %} @@\{{k.id}} \{% end %},
-            \{% end %}
-          }.each do |k, v|
-          	hash[k] = v
-          end
+        def self.add_attributes(hash) : Void
+          \{% if !ATTRIBUTES.empty? %}
+            {
+              \{% for k, v in ATTRIBUTES %}
+                \{{k.id.stringify}} => \{% if v =~ /->/ %} \{{v.id}}.call \{% else %} @@\{{k.id}} \{% end %},
+              \{% end %}
+            }.each do |k, v|
+              hash[k] = v
+            end
+          \{% end %}
         end
 
-        def self.make_assignes(obj)
-        	\{% for k, v in ASSIGNS %}
+        def self.make_assignes(obj : T) : Void
+          \{% for k, v in ASSIGNS %}
           obj.\{{k.id}} = \{% if v =~ /->/ %} \{{v.id}}.call \{% else %} @@assign_\{{k.id}} \{% end %}
           \{% end %}
         end

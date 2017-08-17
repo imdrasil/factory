@@ -1,4 +1,1 @@
-module Factory
-  module Jennifer
-  end
-end
+require "./jennifer/*"

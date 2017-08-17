@@ -151,4 +151,21 @@ describe Factory::Base do
       expect(subject.f1.ends_with?("a")).must_equal(true)
     end
   end
+
+  describe "%describe_class" do
+    describe "child factory describes fully different class" do
+      it "creates instance of child factory described class" do
+        subject = Factory.build_human_pet
+        expect(subject.is_a?(Human)).must_equal(true)
+        expect(subject.f1).must_equal("centaur")
+        expect(subject.f2).must_equal(32)
+      end
+    end
+  end
+
+  describe "%skip_empty_constructor" do
+    it "doesn't render constructor without parameters and prevent some compile time issues" do
+      Factory.build_human_pet
+    end
+  end
 end
