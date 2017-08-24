@@ -1,1 +1,2 @@
-require "./jennifer/*"
+require "./jennifer/base"
+require "./jennifer/trait"

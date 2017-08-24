@@ -2,10 +2,22 @@ module Factory
   class Trait(T)
     Factory.default_methods
 
+    # TODO: find way to suport trit attributes
+    macro attr(name, value, klass = nil)
+      {% raise "Now traits can't maintain attributes." %}
+    end
+
     def self.add_attributes(hash) : Void
     end
 
     def self.make_assignes(obj : T) : Void
+    end
+
+    def self.process_association(obj, assoc)
+    end
+
+    def self.associations
+      [] of String
     end
 
     macro inherited

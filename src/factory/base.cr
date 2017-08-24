@@ -10,7 +10,11 @@ module Factory
     def self.build
     end
 
-    def self.get_trait(name)
+    def self.get_trait(name : String, go_deep)
+    end
+
+    def self.get_trait(name : Symbol)
+      get_trait(name.to_s)
     end
 
     def self.after_initialize(obj)
@@ -109,12 +113,11 @@ module Factory
           \{{trait.id}}
         \{% end %}
 
-        def self.get_trait(name : String)
-          t = super
-          return t if t
+        def self.get_trait(name : String, go_deep : Bool = true)
           \{% for k, v in TRAITS %}
             return \{{v.id}} if \{{k}} == name
           \{% end %}
+          super if go_deep
         end
 
         \{% if ARGUMENT_TYPE.size == 0 && @type.superclass.constant("IS_FACTORY")[-1] == "true" && @type.superclass.constant("ARGUMENT_TYPE").size != 0 %}
@@ -158,13 +161,13 @@ module Factory
             obj
           end
 
-          def self.build(attrs : Hash)
+          def self.build(attrs : Hash | NamedTuple)
             obj = initialize_with(build_attributes(attrs), [] of String)
             after_initialize(obj)
             obj
           end
 
-          def self.build(traits : Array, attrs : Hash)
+          def self.build(traits : Array, attrs : Hash | NamedTuple)
             obj = initialize_with(build_attributes(attrs, traits), traits)
             after_initialize(obj)
             obj
@@ -194,7 +197,7 @@ module Factory
             attrs = attributes
             traits.each do |name|
               trait = get_trait(name.to_s)
-              raise "Unknown trait" if trait.nil?
+              raise "Unknown trait \"#{name.to_s}\"" if trait.nil?
               trait.not_nil!.add_attributes(attrs)
             end
             opts.each do |k, v|
@@ -205,7 +208,7 @@ module Factory
 
           def self.make_assigns(obj, traits)
             \{% for k, v in ASSIGNS %}
-            obj.\{{k.id}} = \{% if v =~ /->/ %} \{{v.id}}.call \{% else %} @@assign_\{{k.id}} \{% end %}
+              obj.\{{k.id}} = \{% if v =~ /->/ %} \{{v.id}}.call \{% else %} @@assign_\{{k.id}} \{% end %}
             \{% end %}
             traits.each do |name|
               trait = get_trait(name.to_s)
