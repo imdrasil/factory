@@ -1,5 +1,28 @@
 module Factory
   module Jennifer
+    macro association_macro
+      macro association(name, factory = nil, strategy = :create, options = nil)
+        \{% ASSOCIATIONS << name.id.stringify %}
+
+        \{% if factory %}
+          \{% klass = factory %}
+        \{% else %}
+          \{% klass = (name.id.stringify.camelcase + "Factory" ).id%}
+        \{% end %}
+
+        def self.__process_association_\{{name.id}}(obj)
+          aobj = \{{klass}}.build(\{% if options %}\{{options}} \{% end %})
+          \{% if strategy.id.stringify == "build" %}
+            obj.append_\{{name.id}}(aobj)
+          \{% elsif strategy.id.stringify == "create" %}
+            obj.add_\{{name.id}}(aobj)
+          \{% else %}
+            \{% raise "Strategy #{strategy.id} of #{@type} is not valid"}
+          \{% end %}
+        end
+      end
+    end
+
     class Base < ::Factory::Base
       not_a_factory
 
@@ -7,6 +30,9 @@ module Factory
       end
 
       def self.before_create(obj)
+      end
+
+      def self.process_association(obj, klasses, assoc)
       end
 
       macro before_create(&block)
@@ -23,7 +49,19 @@ module Factory
         end
       end
 
+      macro inherited
+        ASSOCIATIONS = [] of String
+
+        ::Factory::Jennifer.association_macro
+      end
+
       macro after_finished_hook
+        {% if @type.superclass != ::Factory::Jennifer::Base && @type != ::Factory::Jennifer::Base %}
+          {% for assoc in @type.superclass.constant("ASSOCIATIONS") %}
+            {% ASSOCIATIONS << assoc %}
+          {% end %}
+        {% end %}
+
         {% if IS_FACTORY[-1] == "true" %}
           {% factory_name = @type.stringify.gsub(/Factory$/, "").underscore %}
           factory_creators({{factory_name.id}})
@@ -72,6 +110,40 @@ module Factory
             after_create(obj)
             obj
           end
+
+          def self.make_assigns(obj, traits : Array)
+            \{% for k, v in ASSIGNS %}
+              obj.\{{k.id}} = \{% if v =~ /->/ %} \{{v.id}}.call \{% else %} @@assign_\{{k.id}} \{% end %}
+            \{% end %}
+            traits.each do |name|
+              trait = get_trait(name.to_s)
+              raise "Unknown trait" if trait.nil?
+              trait.not_nil!.make_assignes(obj)
+            end
+            add_associations(obj, traits)
+          end
+
+          def self.add_associations(obj, traits : Array)
+            \{% if !ASSOCIATIONS.empty? %}
+              trait_classes = traits.map { |e| get_trait(e) }.compact
+              \{% for assoc in ASSOCIATIONS %}
+                process_association(obj, trait_classes, \{{assoc}})
+              \{% end %}
+            \{% end %}
+          end
+
+          def self.process_association(obj, trait_classes : Array, assoc)
+            trait_classes.each do |t|
+              if t.associations.includes?(assoc)
+                t.process_association(obj, assoc)
+                return
+              end
+            end
+            \{% for assoc in ASSOCIATIONS %}
+              __process_association_\{{assoc.id}}(obj) if \{{assoc}} == assoc
+            \{% end %}
+            super(obj, trait_classes[0...1], assoc)
+          end
         {% end %}
       end
 
@@ -83,27 +155,27 @@ module Factory
           end
 
           def self.create_{{factory_name}}(**attrs)
-            obj = {{@type}}.build(**attrs)
+            obj = {{@type}}.create(**attrs)
             obj
           end
 
           def self.create_{{factory_name}}(attrs : Hash)
-            obj = {{@type}}.build(attrs)
+            obj = {{@type}}.create(attrs)
             obj
           end
 
           def self.create_{{factory_name}}(traits : Array)
-            obj = {{@type}}.build(traits)
+            obj = {{@type}}.create(traits)
             obj
           end
 
           def self.create_{{factory_name}}(traits : Array, **attrs)
-            obj = {{@type}}.build(traits, **attrs)
+            obj = {{@type}}.create(traits, **attrs)
             obj
           end
 
           def self.create_{{factory_name}}(traits : Array, attrs : Hash)
-            obj = {{@type}}.build(traits, attrs)
+            obj = {{@type}}.create(traits, attrs)
             obj
           end
 

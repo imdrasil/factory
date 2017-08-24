@@ -68,7 +68,6 @@ class TestFactory < Factory::Base
   end
 
   trait :addon do
-    attr :f1, "addon1"
   end
 end
 
@@ -77,7 +76,6 @@ class SecondTestFactory < TestFactory
   assign :f3, 0.64
 
   trait :nested do
-    attr :f1, "nested"
     assign :f2, -2
     assign :f4, "nestedaddon"
   end
@@ -120,6 +118,9 @@ end
 
 class CustomFilmFactory < FilmFactory
   sequence(:name) { |i| "Custom Film #{i}" }
+
+  association :author, AuthorFactory
+
   after_create do |obj|
     obj.name = obj.name! + "after"
   end
@@ -127,4 +128,14 @@ class CustomFilmFactory < FilmFactory
   before_create do |obj|
     obj.name = obj.name! + "before"
   end
+end
+
+class FictionFilmFactory < CustomFilmFactory
+  trait :with_special_author do
+    association :author, options: {name: "Special Author"}
+  end
+end
+
+class AuthorFactory < Factory::Jennifer::Base
+  sequence(:name) { |i| "Author #{i}" }
 end

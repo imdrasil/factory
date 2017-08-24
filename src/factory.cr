@@ -48,7 +48,7 @@ module Factory
           \{{@type}}.build(**attrs)
         end
 
-        def self.build_\{{factory_name}}(attrs : Hash)
+        def self.build_\{{factory_name}}(attrs : Hash | NamedTuple)
           \{{@type}}.build(attrs)
         end
 
@@ -60,7 +60,7 @@ module Factory
           \{{@type}}.build(traits, **attrs)
         end
 
-        def self.build_\{{factory_name}}(traits : Array, attrs : Hash)
+        def self.build_\{{factory_name}}(traits : Array, attrs : Hash | NamedTuple)
           \{{@type}}.build(traits, attrs)
         end
 
@@ -76,7 +76,7 @@ module Factory
           arr
         end
 
-        def self.build_\{{factory_name}}(count : Int32, attrs : Hash)
+        def self.build_\{{factory_name}}(count : Int32, attrs : Hash | NamedTuple)
           arr = [] of \{{CLASS_NAME.last.id}}
           count.times { arr << \{{@type}}.build(attrs) }
           arr
@@ -94,7 +94,7 @@ module Factory
           arr
         end
 
-        def self.build_\{{factory_name}}(count : Int32, traits : Array, attrs : Hash)
+        def self.build_\{{factory_name}}(count : Int32, traits : Array, attrs : Hash | NamedTuple)
           arr = [] of \{{CLASS_NAME.last.id}}
           count.times { arr << \{{@type}}.build(traits, attrs) }
           arr

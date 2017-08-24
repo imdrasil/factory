@@ -190,6 +190,22 @@ It provides direct creating methods same as for building:
 FilmFactory.create([:bad], {:name => "Atilla"})
 ```
 
+Also any association could be described on the factory or trait level:
+
+```crystal
+class FilmFactory < Factory::Jennifer::Base
+  association :author
+  association :actor, UserFactory, options: {name: "Artemius Fault"}
+end
+```
+
+Allowed arguments:
+
+- `:name` - first argument - represent model association name (mandatory)
+- `:factory` - represents factory class (optional); is defaulted from association name
+- `:strategy` - represents creation strategy; optional; default is "create" (also "build" is allowed)
+- `:options` - represents extra arguments to association factory; optional 
+
 ## Development
 
 For development postgres is required because of testing integration with Jennifer.
