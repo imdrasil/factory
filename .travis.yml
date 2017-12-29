@@ -9,6 +9,6 @@ env:
   - DB=postgres DB_USER=postgres DB_PASSWORD=""
 before_script:
   - psql -c 'create database factory_test;' -U postgres
-  - crystal ./spec/support/sam.cr -- db:migrate
+  # - crystal ./spec/support/sam.cr -- db:migrate
 
 script: make seq
