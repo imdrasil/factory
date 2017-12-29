@@ -1,11 +1,6 @@
 module Factory
-  class Trait(T)
+  abstract class Trait(T)
     Factory.default_methods
-
-    # TODO: find way to suport trit attributes
-    macro attr(name, value, klass = nil)
-      {% raise "Now traits can't maintain attributes." %}
-    end
 
     def self.add_attributes(hash) : Void
     end

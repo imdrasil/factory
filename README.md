@@ -1,4 +1,4 @@
-# Factory [![Build Status](https://travis-ci.org/imdrasil/factory.svg)](https://travis-ci.org/imdrasil/factory) [![Latest Release](https://img.shields.io/github/release/imdrasil/factory.svg)](https://github.com/imdrasil/factory/releases)
+# Factory [![Build Status](https://travis-ci.org/imdrasil/factory.svg)](https://travis-ci.org/imdrasil/factory) [![Latest Release](https://img.shields.io/github/release/imdrasil/factory.svg)](https://github.com/imdrasil/factory/releases) [![Docs](https://img.shields.io/badge/docs-available-brightgreen.svg)](https://imdrasil.github.io/factory/latest/)
 
 Easy to use but flexible factory definition utility. Coul be used for testing purpose and for developing as well.
 
@@ -28,7 +28,7 @@ By convenience this factory will builds `Human` class but this behavior can be o
 
 ```crystal
 class AdminFactory < Factory::Base
-    describe_class User
+  describe_class User
 end
 ```
 
@@ -91,19 +91,19 @@ Also `after_initialize` callback could be specified:
 
 ```crystal
 class TestFactory < Factory::Base
-  def self.after_initialize(t)
+  after_initialize do |t|
     super # if you want parrent one to be inked as well
     t.f1.not_nil! += 1
   end
 end
 ```
 
-The way of object initializing could be specified:
+Builder method could be specified as well:
 
 ```crystal
 class TestFactory < Factory::Base
   # here is default builder
-  def self.initialize_with(hash, traits)
+  initialize_with do |hash, traits|
     obj = Test.new(hash)
     make_assigns(obj, traits) # makes all assignements (traits will be described later)
     obj
@@ -212,9 +212,8 @@ For development postgres is required because of testing integration with Jennife
 
 Possible next tasks:
 
-- think  about adding assigning via hash or named tuble argument
-
-- adding `%attr` to traits
+- think  about adding assigning via hash or named tuble argument;
+- adding `%attr` to traits.
 
 
 ## Contributing

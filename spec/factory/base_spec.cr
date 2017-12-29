@@ -15,7 +15,7 @@ describe Factory::Base do
       let(:subject) { SecondTestFactory.build }
 
       it "calls after initialize callbacks" do
-        expect(subject.f4!.ends_with?("2")).must_equal(true)
+        expect(subject.f4.ends_with?("2")).must_equal(true)
       end
     end
 
@@ -26,7 +26,7 @@ describe Factory::Base do
       end
 
       it "defined assigns overrides attributes and calls after initialize callbacks" do
-        expect(SecondTestFactory.build(f4: "some text").f4!).must_equal("assign2")
+        expect(SecondTestFactory.build(f4: "some text").f4).must_equal("assign2")
       end
     end
 
@@ -36,7 +36,7 @@ describe Factory::Base do
       end
 
       it "defined assigns overrides attributes and calls after initialize callbacks" do
-        expect(SecondTestFactory.build(["addon"], f4: "some text").f4!).must_equal("assign2")
+        expect(SecondTestFactory.build(["addon"], f4: "some text").f4).must_equal("assign2")
       end
     end
 
@@ -52,7 +52,7 @@ describe Factory::Base do
       end
 
       it "defined assigns overrides attributes and calls after initialize callbacks" do
-        expect(SecondTestFactory.build({"f4" => "some text"}).f4!).must_equal("assign2")
+        expect(SecondTestFactory.build({"f4" => "some text"}).f4).must_equal("assign2")
       end
     end
 
@@ -62,7 +62,7 @@ describe Factory::Base do
       end
 
       it "defined assigns overrides attributes and calls after initialize callbacks" do
-        expect(SecondTestFactory.build(["addon"], {:f4 => "some text"}).f4!).must_equal("assign2")
+        expect(SecondTestFactory.build(["addon"], {:f4 => "some text"}).f4).must_equal("assign2")
       end
     end
   end
@@ -102,7 +102,7 @@ describe Factory::Base do
 
   describe ".initialize_with" do
     it "creates object with given hash attributes and assignes" do
-      obj = SecondTestFactory.initialize_with(SecondTestFactory.attributes, [] of String)
+      obj = SecondTestFactory._initialize_with(SecondTestFactory.attributes, [] of String)
       expect(obj.class).must_equal(Test)
       expect(obj.f2).must_equal(-1)
       expect(obj.f4).must_equal("assign")
@@ -121,7 +121,7 @@ describe Factory::Base do
 
     it "adds trait's attributes" do
       hash = SecondTestFactory.build_attributes({} of String => String, ["nested"])
-      expect(hash["f1"]).must_equal("nested")
+      expect(hash["f4"]).must_equal("nestedaddon")
     end
 
     it "given params ovveride traits" do
@@ -144,7 +144,7 @@ describe Factory::Base do
     end
   end
 
-  describe "after_initialize" do
+  describe "_after_initialize" do
     it "calls parent callback as well" do
       subject = Factory.build_third_test
       expect(subject.f4).must_equal("assign2")

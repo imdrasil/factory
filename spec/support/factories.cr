@@ -2,21 +2,14 @@ class Test
   @@static = 1
   @@dynamic = 1
   property f1 : String, f2 : Int32, f3 : Float64,
-    f4 : String?, f5 : Int32?, f6 : Array(Int32)?
+    f5 : Int32?, f6 : Array(Int32)?
+  property! f4 : String?
 
   def initialize(hash : Hash(String, String | Int32 | Float64 | Array(Int32)))
     @f1 = hash["f1"].as(String)
     @f2 = hash["f2"].as(Int32)
     @f3 = hash["f3"].as(Float64)
     @f6 = hash["f6"].as(Array(Int32)) if hash.has_key?("f6")
-  end
-
-  def f4!
-    @f4.not_nil!
-  end
-
-  def f4!=(v)
-    @f4 = v
   end
 
   def self.static
@@ -64,7 +57,7 @@ class TestFactory < Factory::Base
   assign :f5, ->{ Test.dynamic }
 
   after_initialize do |t|
-    t.f4! += "2"
+    t.f4 += "2"
   end
 
   trait :addon do
@@ -77,7 +70,11 @@ class SecondTestFactory < TestFactory
 
   trait :nested do
     assign :f2, -2
-    assign :f4, "nestedaddon"
+    attr :f4, "nestedaddon"
+  end
+
+  trait :assign do
+    assign :f4, "nestedassign"
   end
 end
 
@@ -101,41 +98,41 @@ class HumanPetFactory < PetFactory
   end
 end
 
-class FilmFactory < Factory::Jennifer::Base
-  attr :name, "Super Film"
-  attr :rating, 2
-  attr :budget, 12.3f32
+# class FilmFactory < Factory::Jennifer::Base
+#   attr :name, "Super Film"
+#   attr :rating, 2
+#   attr :budget, 12.3f32
 
-  trait :bad do
-    assign :rating, 0
-  end
+#   trait :bad do
+#     assign :rating, 0
+#   end
 
-  trait :hit do
-    assign :rating, 10
-    sequence(:name) { |i| "Best Film #{i}" }
-  end
-end
+#   trait :hit do
+#     assign :rating, 10
+#     sequence(:name) { |i| "Best Film #{i}" }
+#   end
+# end
 
-class CustomFilmFactory < FilmFactory
-  sequence(:name) { |i| "Custom Film #{i}" }
+# class CustomFilmFactory < FilmFactory
+#   sequence(:name) { |i| "Custom Film #{i}" }
 
-  association :author, AuthorFactory
+#   association :author, AuthorFactory
 
-  after_create do |obj|
-    obj.name = obj.name! + "after"
-  end
+#   after_create do |obj|
+#     obj.name = obj.name! + "after"
+#   end
 
-  before_create do |obj|
-    obj.name = obj.name! + "before"
-  end
-end
+#   before_create do |obj|
+#     obj.name = obj.name! + "before"
+#   end
+# end
 
-class FictionFilmFactory < CustomFilmFactory
-  trait :with_special_author do
-    association :author, options: {name: "Special Author"}
-  end
-end
+# class FictionFilmFactory < CustomFilmFactory
+#   trait :with_special_author do
+#     association :author, options: {name: "Special Author"}
+#   end
+# end
 
-class AuthorFactory < Factory::Jennifer::Base
-  sequence(:name) { |i| "Author #{i}" }
-end
+# class AuthorFactory < Factory::Jennifer::Base
+#   sequence(:name) { |i| "Author #{i}" }
+# end

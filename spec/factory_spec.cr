@@ -7,7 +7,7 @@ describe Factory do
       let(:subject) { Factory.build_second_test }
 
       it "calls after initialize callbacks" do
-        expect(subject.f4!.ends_with?("2")).must_equal true
+        expect(subject.f4.ends_with?("2")).must_equal true
       end
     end
 
@@ -85,7 +85,7 @@ describe Factory do
 
   describe "trait" do
     it "defined assigns overrides everything" do
-      expect(Factory.build_second_test(["nested"]).f4!).must_equal("nestedaddon2")
+      expect(Factory.build_second_test(["assign"]).f4).must_equal("nestedassign2")
     end
   end
 

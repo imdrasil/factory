@@ -26,24 +26,24 @@ module Factory
     class Base < ::Factory::Base
       not_a_factory
 
-      def self.after_create(obj)
+      def self._after_create(obj)
       end
 
-      def self.before_create(obj)
+      def self._before_create(obj)
       end
 
       def self.process_association(obj, klasses, assoc)
       end
 
       macro before_create(&block)
-        def self.before_create({{block.args[0].id}})
+        def self._before_create({{block.args[0].id}})
           super
           {{yield}}
         end
       end
 
       macro after_create(&block)
-        def self.after_create({{block.args[0].id}})
+        def self._after_create({{block.args[0].id}})
           super
           {{block.body}}
         end
@@ -68,7 +68,7 @@ module Factory
 
           \{% if ATTRIBUTES.empty? %}
             \{% if !IGNORED_METHODS.includes?("empty_constructor") %}
-              def self.initialize_with(hash, traits)
+              def self._initialize_with(hash, traits)
                 obj = described_class.build
                 make_assigns(obj, traits)
                 obj
@@ -76,7 +76,7 @@ module Factory
             \{% end %}
           \{% else %}
             \{% if !IGNORED_METHODS.includes?("hash_constructor") %}
-              def self.initialize_with(hash, traits)
+              def self._initialize_with(hash, traits)
                 obj = described_class.build(hash)
                 make_assigns(obj, traits)
                 obj
@@ -85,29 +85,29 @@ module Factory
           \{% end %}
 
           def self.create(traits = [] of String | Symbol, **attrs)
-            obj = initialize_with(build_attributes(attrs, traits), traits)
-            after_initialize(obj)
-            before_create(obj)
+            obj = _initialize_with(build_attributes(attrs, traits), traits)
+            _after_initialize(obj)
+            _before_create(obj)
             obj.save
-            after_create(obj)
+            _after_create(obj)
             obj
           end
 
           def self.create(attrs : Hash)
-            obj = initialize_with(build_attributes(attrs), [] of String)
-            after_initialize(obj)
-            before_create(obj)
+            obj = _initialize_with(build_attributes(attrs), [] of String)
+            _after_initialize(obj)
+            _before_create(obj)
             obj.save
-            after_create(obj)
+            _after_create(obj)
             obj
           end
 
           def self.create(traits : Array, attrs : Hash)
-            obj = initialize_with(build_attributes(attrs, traits), traits)
-            after_initialize(obj)
-            before_create(obj)
+            obj = _initialize_with(build_attributes(attrs, traits), traits)
+            _after_initialize(obj)
+            _before_create(obj)
             obj.save
-            after_create(obj)
+            _after_create(obj)
             obj
           end
 

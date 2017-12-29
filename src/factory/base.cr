@@ -17,7 +17,7 @@ module Factory
       get_trait(name.to_s)
     end
 
-    def self.after_initialize(obj)
+    def self._after_initialize(obj)
     end
 
     def self.assign_attr(obj, name, value)
@@ -36,14 +36,14 @@ module Factory
     end
 
     macro after_initialize(&block)
-      def self.after_initialize({{block.args[0].id}})
+      def self._after_initialize({{block.args[0].id}})
         super
         {{block.body}}
       end
     end
 
     macro initialize_with(&block)
-      def self.initialize_with({{block.args[0].id}}, {{block.args[1].id}})
+      def self._initialize_with({{block.args[0].id}}, {{block.args[1].id}})
         {{block.body}}
       end
     end
@@ -70,6 +70,11 @@ module Factory
       {% TRAIT_CLASS_DECLARATIONS << "_macro_trait_#{name.id}" %}
     end
 
+    macro skip_all_constructors
+      skip_hash_constructor
+      skip_empty_constructor
+    end
+
     macro inherited
       IS_FACTORY = ["true"]
       TRAITS = {} of String => String
@@ -91,13 +96,10 @@ module Factory
         \{% end %}
       \{% end %}
 
-      macro def self.described_class
+      def self.described_class
+        \{% begin %}
         \{{CLASS_NAME.last.id}}
-      end
-
-      macro skip_all_constructors
-        skip_hash_constructor
-        skip_empty_constructor
+        \{% end %}
       end
 
       macro skip_hash_constructor
@@ -139,7 +141,7 @@ module Factory
 
           \{% if ATTRIBUTES.empty? %}
             \{% if !IGNORED_METHODS.includes?("empty_constructor") %}
-              def self.initialize_with(hash, traits)
+              def self._initialize_with(hash, traits)
                 obj = described_class.new
                 make_assigns(obj, traits)
                 obj
@@ -147,7 +149,7 @@ module Factory
             \{% end %}
           \{% else %}
             \{% if !IGNORED_METHODS.includes?("hash_constructor") %}
-              def self.initialize_with(hash, traits)
+              def self._initialize_with(hash, traits)
                 obj = described_class.new(hash)
                 make_assigns(obj, traits)
                 obj
@@ -156,24 +158,25 @@ module Factory
           \{% end %}
 
           def self.build(traits = [] of String | Symbol, **attrs)
-            obj = initialize_with(build_attributes(attrs, traits), traits)
-            after_initialize(obj)
+            obj = _initialize_with(build_attributes(attrs, traits), traits)
+            _after_initialize(obj)
             obj
           end
 
           def self.build(attrs : Hash | NamedTuple)
-            obj = initialize_with(build_attributes(attrs), [] of String)
-            after_initialize(obj)
+            obj = _initialize_with(build_attributes(attrs), [] of String)
+            _after_initialize(obj)
             obj
           end
 
           def self.build(traits : Array, attrs : Hash | NamedTuple)
-            obj = initialize_with(build_attributes(attrs, traits), traits)
-            after_initialize(obj)
+            obj = _initialize_with(build_attributes(attrs, traits), traits)
+            _after_initialize(obj)
             obj
           end
 
           def self.attributes
+            \{% begin %}
             \{% if !ATTRIBUTES.empty? %}
               \{% if ARGUMENT_TYPE.empty? %}
               {
@@ -191,9 +194,10 @@ module Factory
             \{% else %}
               {} of String => String
             \{% end %}
+            \{% end %}
           end
 
-          def self.build_attributes(opts, traits = [] of String | Symbol)
+          def self.build_attributes(opts, traits : Array = [] of String | Symbol)
             attrs = attributes
             traits.each do |name|
               trait = get_trait(name.to_s)
@@ -207,6 +211,7 @@ module Factory
           end
 
           def self.make_assigns(obj, traits)
+            \{% begin %}
             \{% for k, v in ASSIGNS %}
               obj.\{{k.id}} = \{% if v =~ /->/ %} \{{v.id}}.call \{% else %} @@assign_\{{k.id}} \{% end %}
             \{% end %}
@@ -215,6 +220,7 @@ module Factory
               raise "Unknown trait" if trait.nil?
               trait.not_nil!.make_assignes(obj)
             end
+            \{% end %}
           end
         \{% end %}
 
