@@ -2,24 +2,26 @@ module Factory
   module Jennifer
     macro association_macro
       macro association(name, factory = nil, strategy = :create, options = nil)
-        \{% ASSOCIATIONS << name.id.stringify %}
+        {% verbatim do %}
+          {% ASSOCIATIONS << name.id.stringify %}
 
-        \{% if factory %}
-          \{% klass = factory %}
-        \{% else %}
-          \{% klass = (name.id.stringify.camelcase + "Factory" ).id%}
-        \{% end %}
+          {% if factory %}
+            {% klass = factory %}
+          {% else %}
+            {% klass = (name.id.stringify.camelcase + "Factory" ).id%}
+          {% end %}
 
-        def self.__process_association_\{{name.id}}(obj)
-          aobj = \{{klass}}.build(\{% if options %}\{{options}} \{% end %})
-          \{% if strategy.id.stringify == "build" %}
-            obj.append_\{{name.id}}(aobj)
-          \{% elsif strategy.id.stringify == "create" %}
-            obj.add_\{{name.id}}(aobj)
-          \{% else %}
-            \{% raise "Strategy #{strategy.id} of #{@type} is not valid"}
-          \{% end %}
-        end
+          def self.__process_association_\{{name.id}}(obj)
+            aobj = {{klass}}.build({% if options %}{{options}} {% end %})
+            {% if strategy.id.stringify == "build" %}
+              obj.append_{{name.id}}(aobj)
+            {% elsif strategy.id.stringify == "create" %}
+              obj.add_{{name.id}}(aobj)
+            {% else %}
+              {% raise "Strategy #{strategy.id} of #{@type} is not valid" %}
+            {% end %}
+          end
+        {% end %}
       end
     end
 
