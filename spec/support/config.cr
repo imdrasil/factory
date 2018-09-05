@@ -1,5 +1,5 @@
-require "jennifer/adapter/postgres"
 require "jennifer"
+require "jennifer/adapter/postgres"
 
 ::Jennifer::Config.configure do |conf|
   conf.logger.level = Logger::ERROR

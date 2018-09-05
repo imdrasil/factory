@@ -76,11 +76,11 @@ describe Factory::Base do
 
   describe ".attributes" do
     it "returns hash with element of attributes type" do
-      expect(TestFactory.attributes.class).must_equal(Hash(String, String | Int32 | Float64 | Array(Int32)))
+      expect(TestFactory.attributes).must_be_instance_of(Hash(String, String | Int32 | Float64 | Array(Int32)))
     end
 
     it "returns hash with automatically generated type" do
-      expect(HumanFactory.attributes.class).must_equal(Hash(String, String))
+      expect(HumanFactory.attributes).must_be_instance_of(Hash(String, String))
     end
 
     it "includes only attrs" do
@@ -110,14 +110,9 @@ describe Factory::Base do
   end
 
   describe ".build_attributes" do
-    it "adds given parameters to attributes" do
-      hash = SecondTestFactory.build_attributes({"f1" => "f1"})
-      expect(hash["f1"]).must_equal("f1")
-      hash = SecondTestFactory.build_attributes({:f1 => "f1"})
-      expect(hash["f1"]).must_equal("f1")
-      hash = SecondTestFactory.build_attributes({f1: "f1"})
-      expect(hash["f1"]).must_equal("f1")
-    end
+    it { expect(SecondTestFactory.build_attributes({"f1" => "f1"})["v1"]).must_equal("v1") }
+    it { expect(SecondTestFactory.build_attributes({:f1 => "v1"})["f1"]).must_equal("v1") }
+    it { expect(SecondTestFactory.build_attributes({f1: "v1"})["f1"]).must_equal("v1") }
 
     it "adds trait's attributes" do
       hash = SecondTestFactory.build_attributes({} of String => String, ["nested"])
@@ -131,16 +126,18 @@ describe Factory::Base do
   end
 
   describe ".make_assigns" do
+    @object : Test?
+
+    let(:object) { Factory.build_test }
+
     it "assigns to given object" do
-      obj = Factory.build_test
-      SecondTestFactory.make_assigns(obj, [] of String)
-      expect(obj.f3).must_equal(0.64)
+      SecondTestFactory.make_assigns(object, [] of String)
+      expect(object.f3).must_equal(0.64)
     end
 
     it "assigns traits to given object" do
-      obj = Factory.build_test
-      SecondTestFactory.make_assigns(obj, ["nested"])
-      expect(obj.f2).must_equal(-2)
+      SecondTestFactory.make_assigns(object, ["nested"])
+      expect(object.f2).must_equal(-2)
     end
   end
 
