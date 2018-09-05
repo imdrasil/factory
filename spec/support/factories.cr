@@ -98,41 +98,41 @@ class HumanPetFactory < PetFactory
   end
 end
 
-# class FilmFactory < Factory::Jennifer::Base
-#   attr :name, "Super Film"
-#   attr :rating, 2
-#   attr :budget, 12.3f32
+class FilmFactory < Factory::Jennifer::Base
+  attr :name, "Super Film"
+  attr :rating, 2
+  attr :budget, 12.3f32
 
-#   trait :bad do
-#     assign :rating, 0
-#   end
+  trait :bad do
+    assign :rating, 0
+  end
 
-#   trait :hit do
-#     assign :rating, 10
-#     sequence(:name) { |i| "Best Film #{i}" }
-#   end
-# end
+  trait :hit do
+    assign :rating, 10
+    sequence(:name) { |i| "Best Film #{i}" }
+  end
+end
 
-# class CustomFilmFactory < FilmFactory
-#   sequence(:name) { |i| "Custom Film #{i}" }
+class CustomFilmFactory < FilmFactory
+  sequence(:name) { |i| "Custom Film #{i}" }
 
-#   association :author, AuthorFactory
+  association :author, AuthorFactory
 
-#   after_create do |obj|
-#     obj.name = obj.name! + "after"
-#   end
+  after_create do |obj|
+    obj.name = obj.name! + "after"
+  end
 
-#   before_create do |obj|
-#     obj.name = obj.name! + "before"
-#   end
-# end
+  before_create do |obj|
+    obj.name = obj.name! + "before"
+  end
+end
 
-# class FictionFilmFactory < CustomFilmFactory
-#   trait :with_special_author do
-#     association :author, options: {name: "Special Author"}
-#   end
-# end
+class FictionFilmFactory < CustomFilmFactory
+  trait :with_special_author do
+    association :author, options: {name: "Special Author"}
+  end
+end
 
-# class AuthorFactory < Factory::Jennifer::Base
-#   sequence(:name) { |i| "Author #{i}" }
-# end
+class AuthorFactory < Factory::Jennifer::Base
+  sequence(:name) { |i| "Author #{i}" }
+end
