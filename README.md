@@ -1,6 +1,6 @@
 # Factory [![Build Status](https://travis-ci.org/imdrasil/factory.svg)](https://travis-ci.org/imdrasil/factory) [![Latest Release](https://img.shields.io/github/release/imdrasil/factory.svg)](https://github.com/imdrasil/factory/releases) [![Docs](https://img.shields.io/badge/docs-available-brightgreen.svg)](https://imdrasil.github.io/factory/latest/)
 
-Easy to use but flexible factory definition utility. Coul be used for testing purpose and for developing as well.
+Easy to use but flexible factory definition utility. Could be used for testing purpose and for developing as well.
 
 ## Installation
 
