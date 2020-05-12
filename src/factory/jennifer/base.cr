@@ -60,7 +60,7 @@ module Factory
             {% if ATTRIBUTES.empty? %}
               {% if !IGNORED_METHODS.includes?("empty_constructor") %}
                 def self._initialize_with(hash, traits)
-                  obj = described_class.build
+                  obj = described_class.new
                   make_assigns(obj, traits)
                   obj
                 end
@@ -68,7 +68,7 @@ module Factory
             {% else %}
               {% if !IGNORED_METHODS.includes?("hash_constructor") %}
                 def self._initialize_with(hash, traits)
-                  obj = described_class.build(hash)
+                  obj = described_class.new(hash)
                   make_assigns(obj, traits)
                   obj
                 end

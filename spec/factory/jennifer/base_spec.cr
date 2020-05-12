@@ -4,11 +4,11 @@ describe Factory::Jennifer::Base do
   let(:described_class) { Factory::Jennifer::Base }
 
   before do
-    ::Jennifer::Adapter.adapter.begin_transaction
+    ::Jennifer::Adapter.default_adapter.begin_transaction
   end
 
   after do
-    ::Jennifer::Adapter.adapter.rollback_transaction
+    ::Jennifer::Adapter.default_adapter.rollback_transaction
   end
 
   describe "%association" do
