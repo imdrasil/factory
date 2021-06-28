@@ -4,19 +4,22 @@ version: 0.1.5
 authors:
   - Roman Kalnytskyi <moranibaca@gmail.com>
 
-crystal: 0.34.0
+crystal: ">= 0.34.0"
 
 license: MIT
 
 development_dependencies:
   minitest:
     github: ysbaddaden/minitest.cr
-    version: "~> 0.5.1"
+    version: "~> 1.0.0"
   sam:
     github: imdrasil/sam.cr
-    version: "~> 0.3.0"
+    version: "~> 0.4.1"
   jennifer:
     github: imdrasil/jennifer.cr
-    branch: "release/0.9.0"
+    branch: "master"
   pg:
     github: will/crystal-pg
+  ameba:
+    github: crystal-ameba/ameba
+    version: "= 0.14.3"

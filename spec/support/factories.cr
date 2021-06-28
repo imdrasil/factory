@@ -91,7 +91,7 @@ class HumanPetFactory < PetFactory
   skip_empty_constructor
   assign :f1, "centaur"
 
-  initialize_with do |hash, traits|
+  initialize_with do |hash, traits| # ameba:disable Lint/UnusedArgument
     obj = described_class.new({"f1" => "some value"})
     make_assigns(obj, traits)
     obj
