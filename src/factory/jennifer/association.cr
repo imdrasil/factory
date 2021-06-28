@@ -7,7 +7,7 @@ module Factory
         {% if factory %}
           {% klass = factory %}
         {% else %}
-          {% klass = (name.id.stringify.camelcase + "Factory" ).id %}
+          {% klass = (name.id.stringify.camelcase + "Factory").id %}
         {% end %}
 
         def self.__process_association_{{name.id}}(obj)

@@ -2,8 +2,7 @@ require "jennifer"
 require "jennifer/adapter/postgres"
 
 ::Jennifer::Config.configure do |conf|
-  conf.logger.level = Logger::ERROR
-  conf.host = "localhost"
+  conf.logger.level = :error
   conf.adapter = "postgres"
   conf.migration_files_path = "./spec/support/migrations"
   conf.db = "factory_test"

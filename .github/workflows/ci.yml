@@ -1,0 +1,47 @@
+name: CI
+
+on:
+  push:
+  schedule:
+    - cron: "0 7 * * 1"
+
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+
+    runs-on: ubuntu-latest
+
+    env:
+      DB_USER: dbuser
+      DB_PASSWORD: dbpassword
+
+    steps:
+      - name: Install Crystal
+        uses: oprypin/install-crystal@v1
+
+      - name: Donwload sources
+        uses: actions/checkout@v2
+
+      - name: Check formatting
+        run: crystal tool format --check
+
+      - name: Install dependencies
+        # TODO: remove --ignore-crystal-version once all packages will be updated
+        run: shards install --ignore-crystal-version
+
+      - name: Run linter
+        run: ./bin/ameba
+
+      - name: Install PostgreSQL
+        uses: harmon758/postgresql-action@v1
+        with:
+          postgresql version: '9.5'
+          postgresql user: ${{ env.DB_USER }}
+          postgresql password: ${{ env.DB_PASSWORD }}
+
+      - name: Run migrations
+        run: crystal sam.cr db:create @ db:migrate
+
+      - name: Run specs
+        run: make seq
